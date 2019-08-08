@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="theme" content="hugo-academic">
+  <meta name="generator" content="Hugo 0.37.1" />
+  <meta name="author" content="bk201">
+
+  
+  
+  
+  
+    
+      
+    
+  
+  <meta name="description" content=" 承接上文
+各科目涉及的具体知识点 信息系统综合知识  操作系统基本原理 全程指导分了5块讲解:处理器,文件,存储,作业,设备管理.这些基本都是操作系统的职能,那原理自然应该是指这些职能是如何实现的?  处理器管理
+从静态观点观点看,进程由程序,数据,进程控制块(PCB:process control block)组成.从动态观点看,进程是计算机状态的一个有序集合. 既然是状态的有序集合,那集合里的元素哪些呢.具备运行条件等待操作系统分配处理器资源,就绪态;占有处理器资源,运行态;不具备运行条件等待某事件发生,等待态(阻塞态).当系统资源(内存)不满足运行时要求,会出现进程挂起,这就又出现了2种状态:静止就绪态和阻塞态,相对应的三态模型中的称活跃就绪态和阻塞态.进程状态转换通过pv操作来控制.pv操作主要就是p操作,v操作,信号量.信号量（Semaphore）由一个值和一个指针组成，指针指向等待该信号量的进程。执行一次p操作,就是请求分配一个资源,s减1,当s=0,s表示可用资源数量.在操作系统中,进程间存在互斥(资源共享)和同步(协作)关系.互斥就是指组织多个进程同时访问这些资源的代码段,这个代码段称为临界区,这个资源成为临界资源.由于只允许一个进入,信号量初始值应该为1.同步点就是说进程a应该在进程b完成某项事情之前一直等待,也就是说进程a的p操作一直等待到进程b的v操作结束才开始,那么信号量初始值应该从0开始.
+ 生产者消费者问题
+这里面存在一个竞争条件的例子(竞争条件指多个线程或者进程在读写一个共享数据时结果依赖于它们执行的相对时间的情形。):如果只监控fillCount(生产条数),对于producer,当等于1的时候就唤醒consumer,等于cache size的时候就sleep;对于consumer,当等于cache size-1的时候就唤醒producer,等于0的时候就sleep.理想情况下肯定没问题,但是存在时间片(时间片即CPU分配给各个程序的时间，每个线程被分配一个时间段，称作它的时间片，即该进程允许运行的时间，使各个程序从表面上看是同时进行的。如果在时间片结束时进程还在运行，则CPU将被剥夺并分配给另一个进程。).也就是说,这个变量是被2个进程同时访问的,随时都有可能执行一半的时候变量被更改.比如此时变量为0,consumer运行到过了0判断准备sleep的时候,这时候producer生产了1个数据,并讲变量更改为1,并去唤醒consumer,但consumer还没sleep呢,唤醒失败,运行sleep成功.然后producer一发不可收拾,一直生产直到满缓存.分析原因,变量在2个进程中都可以读取和写入.那么引入信号量算法解决.    ">
+
+  
+  <link rel="alternate" hreflang="zh-cn" href="/zh/post/architect_exam_day2/">
+
+  
+
+
+  
+
+  
+  
+  <meta name="theme-color" content="#0095eb">
+  
+  
+  
+  
+    
+  
+  
+    
+    
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+    
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha512-6MXa8B6uaO18Hid6blRMetEIoPqHf7Ux1tnyIQdpt9qI5OACx7C+O3IVTr98vwGnlcg0LOLa02i9Y1HpVhlfiw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.1/css/academicons.min.css" integrity="sha512-NThgw3XKQ1absAahW6to7Ey42uycrVvfNfyjqcFNgCmOCQ5AR4AO0SiXrN+8ZtYeappp56lk1WtvjVmEa+VR6A==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" integrity="sha256-ygkqlh3CYSUri3LhQxzdcm0n1EQvH2Y+U5S2idbLtxs=" crossorigin="anonymous">
+  
+  
+  
+  
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat:400,700%7cRoboto:400,400italic,700%7cRoboto&#43;Mono">
+  
+  <link rel="stylesheet" href="/zh/styles.css">
+  
+
+  
+
+  
+  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="coderer&amp;debuger&amp;fucker">
+  <link rel="feed" href="/index.xml" type="application/rss+xml" title="coderer&amp;debuger&amp;fucker">
+  
+
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="icon" type="image/png" href="/img/icon.png">
+  <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
+
+  <link rel="canonical" href="/zh/post/architect_exam_day2/">
+
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="og:site_name" content="coderer&amp;debuger&amp;fucker">
+  <meta property="og:url" content="/zh/post/architect_exam_day2/">
+  <meta property="og:title" content="[系统架构设计师考试] day two | coderer&amp;debuger&amp;fucker">
+  <meta property="og:description" content=" 承接上文
+各科目涉及的具体知识点 信息系统综合知识  操作系统基本原理 全程指导分了5块讲解:处理器,文件,存储,作业,设备管理.这些基本都是操作系统的职能,那原理自然应该是指这些职能是如何实现的?  处理器管理
+从静态观点观点看,进程由程序,数据,进程控制块(PCB:process control block)组成.从动态观点看,进程是计算机状态的一个有序集合. 既然是状态的有序集合,那集合里的元素哪些呢.具备运行条件等待操作系统分配处理器资源,就绪态;占有处理器资源,运行态;不具备运行条件等待某事件发生,等待态(阻塞态).当系统资源(内存)不满足运行时要求,会出现进程挂起,这就又出现了2种状态:静止就绪态和阻塞态,相对应的三态模型中的称活跃就绪态和阻塞态.进程状态转换通过pv操作来控制.pv操作主要就是p操作,v操作,信号量.信号量（Semaphore）由一个值和一个指针组成，指针指向等待该信号量的进程。执行一次p操作,就是请求分配一个资源,s减1,当s=0,s表示可用资源数量.在操作系统中,进程间存在互斥(资源共享)和同步(协作)关系.互斥就是指组织多个进程同时访问这些资源的代码段,这个代码段称为临界区,这个资源成为临界资源.由于只允许一个进入,信号量初始值应该为1.同步点就是说进程a应该在进程b完成某项事情之前一直等待,也就是说进程a的p操作一直等待到进程b的v操作结束才开始,那么信号量初始值应该从0开始.
+ 生产者消费者问题
+这里面存在一个竞争条件的例子(竞争条件指多个线程或者进程在读写一个共享数据时结果依赖于它们执行的相对时间的情形。):如果只监控fillCount(生产条数),对于producer,当等于1的时候就唤醒consumer,等于cache size的时候就sleep;对于consumer,当等于cache size-1的时候就唤醒producer,等于0的时候就sleep.理想情况下肯定没问题,但是存在时间片(时间片即CPU分配给各个程序的时间，每个线程被分配一个时间段，称作它的时间片，即该进程允许运行的时间，使各个程序从表面上看是同时进行的。如果在时间片结束时进程还在运行，则CPU将被剥夺并分配给另一个进程。).也就是说,这个变量是被2个进程同时访问的,随时都有可能执行一半的时候变量被更改.比如此时变量为0,consumer运行到过了0判断准备sleep的时候,这时候producer生产了1个数据,并讲变量更改为1,并去唤醒consumer,但consumer还没sleep呢,唤醒失败,运行sleep成功.然后producer一发不可收拾,一直生产直到满缓存.分析原因,变量在2个进程中都可以读取和写入.那么引入信号量算法解决.    ">
+  <meta property="og:locale" content="zh-cn">
+  
+  <meta property="article:published_time" content="2018-09-11T10:21:28&#43;08:00">
+  
+  <meta property="article:modified_time" content="2018-09-11T10:21:28&#43;08:00">
+  
+
+  
+
+  <title>[系统架构设计师考试] day two | coderer&amp;debuger&amp;fucker</title>
+
+</head>
+<body id="top" data-spy="scroll" data-target="#toc" data-offset="71" >
+
+<nav class="navbar navbar-default navbar-fixed-top" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="navbar-header">
+      
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+              data-target=".navbar-collapse" aria-expanded="false">
+        <span class="sr-only">切换导航</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+      <a class="navbar-brand" href="/zh">coderer&amp;debuger&amp;fucker</a>
+    </div>
+
+    
+    <div class="collapse navbar-collapse">
+
+      
+      
+      <ul class="nav navbar-nav navbar-right">
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/zh/#posts">
+            
+            <span>文</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/zh/#contact">
+            
+            <span>聊</span>
+            
+          </a>
+        </li>
+
+        
+        
+      
+
+      
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+
+<article class="article" itemscope itemtype="http://schema.org/Article">
+
+  
+
+
+  <div class="article-container">
+    <h1 itemprop="name">[系统架构设计师考试] day two</h1>
+
+    
+
+<div class="article-metadata">
+
+  <span class="article-date">
+    
+    <time datetime="2018-09-11 10:21:28 &#43;0800 &#43;0800" itemprop="datePublished dateModified">
+      2018-09-11
+    </time>
+  </span>
+  <span itemscope itemprop="author publisher" itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="bk201">
+  </span>
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    1 分钟阅读时间
+  </span>
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <a href="/zh/post/architect_exam_day2/#disqus_thread"></a>
+  
+
+  
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fa fa-folder"></i>
+    
+    <a href="/zh/categories/%e8%80%83%e8%af%95">考试</a
+    >
+    
+  </span>
+  
+  
+
+  
+  
+
+  
+
+</div>
+
+
+    <div class="article-style" itemprop="articleBody">
+      
+
+<p>承接上文</p>
+
+<h3 id="各科目涉及的具体知识点">各科目涉及的具体知识点</h3>
+
+<h4 id="信息系统综合知识">信息系统综合知识</h4>
+
+<ol>
+<li>操作系统基本原理
+全程指导分了5块讲解:处理器,文件,存储,作业,设备管理.这些基本都是操作系统的职能,那原理自然应该是指这些职能是如何实现的?
+
+<ol>
+<li>处理器管理<br />
+从静态观点观点看,进程由程序,数据,进程控制块(PCB:process control block)组成.从动态观点看,进程是计算机状态的一个有序集合. 既然是状态的有序集合,那集合里的元素哪些呢.具备运行条件等待操作系统分配处理器资源,就绪态;占有处理器资源,运行态;不具备运行条件等待某事件发生,等待态(阻塞态).当系统资源(内存)不满足运行时要求,会出现进程挂起,这就又出现了2种状态:静止就绪态和阻塞态,相对应的三态模型中的称活跃就绪态和阻塞态.进程状态转换通过pv操作来控制.pv操作主要就是p操作,v操作,信号量.信号量（Semaphore）由一个值和一个指针组成，指针指向等待该信号量的进程。执行一次p操作,就是请求分配一个资源,s减1,当s<0表示没又资源可用,s的绝对值表示等待该资源的进程数.执行一次v操作,就是释放一个资源,s加1,当s>=0,s表示可用资源数量.在操作系统中,进程间存在互斥(资源共享)和同步(协作)关系.互斥就是指组织多个进程同时访问这些资源的代码段,这个代码段称为临界区,这个资源成为临界资源.由于只允许一个进入,信号量初始值应该为1.同步点就是说进程a应该在进程b完成某项事情之前一直等待,也就是说进程a的p操作一直等待到进程b的v操作结束才开始,那么信号量初始值应该从0开始.<br />
+
+<ul>
+<li>生产者消费者问题<br />
+这里面存在一个竞争条件的例子(竞争条件指多个线程或者进程在读写一个共享数据时结果依赖于它们执行的相对时间的情形。):如果只监控fillCount(生产条数),对于producer,当等于1的时候就唤醒consumer,等于cache size的时候就sleep;对于consumer,当等于cache size-1的时候就唤醒producer,等于0的时候就sleep.理想情况下肯定没问题,但是存在时间片(时间片即CPU分配给各个程序的时间，每个线程被分配一个时间段，称作它的时间片，即该进程允许运行的时间，使各个程序从表面上看是同时进行的。如果在时间片结束时进程还在运行，则CPU将被剥夺并分配给另一个进程。).也就是说,这个变量是被2个进程同时访问的,随时都有可能执行一半的时候变量被更改.比如此时变量为0,consumer运行到过了0判断准备sleep的时候,这时候producer生产了1个数据,并讲变量更改为1,并去唤醒consumer,但consumer还没sleep呢,唤醒失败,运行sleep成功.然后producer一发不可收拾,一直生产直到满缓存.分析原因,变量在2个进程中都可以读取和写入.那么引入信号量算法解决.</li>
+</ul></li>
+</ol></li>
+</ol>
+
+    </div>
+
+    
+
+
+<div class="article-tags">
+  
+  <a class="btn btn-primary btn-outline" href="/zh/tags/%e7%b3%bb%e7%bb%9f%e6%9e%b6%e6%9e%84%e8%ae%be%e8%ae%a1%e5%b8%88">系统架构设计师</a>
+  
+</div>
+
+
+
+
+    
+    
+    <div class="article-widget">
+      <div class="hr-light"></div>
+      <h3>相关</h3>
+      <ul>
+        
+        <li><a href="/zh/post/architect_exam_day1/">[系统架构设计师考试] day one</a></li>
+        
+      </ul>
+    </div>
+    
+
+    
+    <div class="article-widget">
+      <div class="post-nav">
+  
+  <div class="post-nav-item">
+    <div class="meta-nav"></div>
+    <a href="/zh/post/architect_exam_day1/" rel="next">[系统架构设计师考试] day one</a>
+  </div>
+  
+  
+</div>
+
+    </div>
+    
+
+    
+<section id="comments">
+  <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "bk201sama" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+
+  </div>
+</article>
+
+<footer class="site-footer">
+  <div class="container">
+    <p class="powered-by">
+
+      &copy; 2018 &middot; 
+
+      Powered by the
+      <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+      <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+      <span class="pull-right" aria-hidden="true">
+        <a href="#" id="back_to_top">
+          <span class="button_icon">
+            <i class="fa fa-chevron-up fa-2x"></i>
+          </span>
+        </a>
+      </span>
+
+    </p>
+  </div>
+</footer>
+
+
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close btn-large" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">引用</h4>
+      </div>
+      <div>
+        <pre><code class="modal-body tex"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-primary btn-outline js-copy-cite" href="#" target="_blank">
+          <i class="fa fa-copy"></i> 复制
+        </a>
+        <a class="btn btn-primary btn-outline js-download-cite" href="#" target="_blank">
+          <i class="fa fa-download"></i> 下载
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+    
+    <script id="dsq-count-scr" src="//bk201sama.disqus.com/count.js" async></script>
+    
+
+    
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha512-3P8rXCuGJdNZOnUx/03c1jOTnMn3rP63nBip5gOP2qmUh5YAdVAvFZ1E+QLZZbC1rtMrQb+mah3AfYW11RUrWA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.3/imagesloaded.pkgd.min.js" integrity="sha512-umsR78NN0D23AzgoZ11K7raBD+R6hqKojyBZs1w8WvYlsI+QuKRGBx3LFCwhatzBunCjDuJpDHwxD13sLMbpRA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha512-iztkobsvnjKfAtTNdHkGVjAYTrrtlC7mGp/54c40wowO7LhURYl3gVzzcEqGl/qKXQltJ2HwMrdLcNUdo+N/RQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.4/isotope.pkgd.min.js" integrity="sha512-VDBOIlDbuC4VWxGJNmuFRQ0Li0SKkDpmGyuhAG5LTDLd/dJ/S0WMVxriR2Y+CyPL5gzjpN4f/6iqWVBJlht0tQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" integrity="sha256-X5PoE3KU5l+JcX+w09p/wHl9AzK333C4hJ2I9S5mD4M=" crossorigin="anonymous"></script>
+    
+    
+    <script src="/js/hugo-academic.js"></script>
+    
+
+    
+    
+      
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+      
+
+      
+
+      
+
+      <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    
+    
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+    </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML" integrity="sha512-tOav5w1OjvsSJzePRtt2uQPFwBoHt1VZcUq8l8nm5284LEKE9FSJBQryzMBzHxY5P0zRdNqEcpLIRVYFNgu1jw==" crossorigin="anonymous"></script>
+    
+    
+
+  </body>
+</html>
+

@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="theme" content="hugo-academic">
+  <meta name="generator" content="Hugo 0.37.1" />
+  <meta name="author" content="bk201">
+
+  
+  
+  
+  
+    
+      
+    
+  
+  <meta name="description" content=" 目前好像有5门高级,[信息系统项目管理师,系统分析师,系统架构设计师,网络规划设计师,系统规划与管理师]有想法刷一下.so,first,从兴趣最大的系统架构设计师开始.官网 本系列博文想以大纲为中心,全程发散思维，胡思乱想。
+大纲 考试日期 上半年5月份 下半年11月份,提前2个月关注报名
+考试科目设计设置  信息系统综合知识，考试时间为 150 分钟，笔试，选择题；上午9:00-11:30 系统架构设计案例分析，考试时间为 90 分钟，笔试，问答题；下午1:30-3:30 系统架构设计论文，考试时间为 120 分钟，笔试，论文题。下午3:20-5:20  考试要求(按重要性重排序)  熟悉信息系统开发过程； 熟悉主流的中间件和应用服务器平台； 熟练掌握信息安全技术、安全策略、安全管理知识； 熟练阅读和正确理解相关领域的英文文献； 掌握计算机硬软件与网络的基础知识； 掌握应用的数学基础知识; 掌握软件系统建模、系统架构设计基本技术； 理解信息系统开发标准、常用信息技术标准； 了解信息化、信息技术有关法律、法规的基础知识； 了解用户的行业特点，并根据行业特点架构合适的系统设计;   了解：只需要知道有这么个事物，大概的内容就可以了，一般考选择题. 理解：知道并且需要知道为什么，之间的关系，怎么形成，一般简答题和辨析. 掌握：必考，更高的层次，是自己内化后的东西，一般论述和辨析. 熟悉：需要记忆的，一般简答题和选择. 了解熟悉是基础，理解是关键，掌握运用是最终目的考纲里的关于熟悉、理解、掌握的一定要多看多读多分析多写
+ 从大纲看起来除了法律法规,用户行业特点设计系统,其他都是重点,包括专业英语与应用数学.
+各科目涉及的具体知识点 信息系统综合知识  计算机软件与网络基础知识,对应考试要求中[5]掌握计算机硬软件与网络的基础知识,也就是要会运用这些知识去解决问题.  操作系统的类型 你要问类型，自然要知道什么是操作系统。那么以这么多年开发的角度胡诌，操作系统就是能为软件层面的各种资源，包括内存，cpu等进行调度的平台。拿最近接触的kubernate来说，我也可以把k8s理解为分布式的操作系统，而普通大众因为接触windows比较多而把Gui程序理解为操作系统是不对的（linux的gnome等）。
+全程指导的描述： 操作系统是计算机系统中的核心系统软件， 负责管理和控制计算机系统中硬件和软件资源，合理地组织计算机工作流程和有效利用资源，在计算机与用户之间起接口的作用。
+根据工作方式分为批处理操作系统、分时操作系统、实时操作系统、网络操作系统和分布式操作系统等；
+根据架构可以分为单内核操作系统等（单内核、微内核、超微内核、以及外核）；
+根据运行的环境，可以分为桌面操作系统，嵌入式操作系统等；
+根据指令的长度分为8bit, 16bit, 32bit, 64bit的操作系统。
+ 操作系统的结构 依据wiki所说操作系统分为四大部分:驱动程序,内核,支承库(接口库;它们职责在于把系统所提供的基本服务包装成应用程序所能够使用的编程接口（API），是最靠近应用程序的部分。),外围(是指操作系统中除以上三类以外的所有其他部分，通常是用于提供特定高级服务的部件。例如，在微内核结构中，大部分系统服务，以及UNIX/Linux中各种守护进程都通常被划归此列。);四大部分的不同布局造成了不同结构。 根据全程指导的说法:无序结构,层次结构, 面向对象结构,对称多处理结构 ,微内核结构.（wiki上是分为简单结构、层结构、微内核结构、垂直结构、和虚拟机结构）。那么多说法，归根到底就是这四大部分怎么布局。    ">
+
+  
+  <link rel="alternate" hreflang="zh-cn" href="/zh/post/architect_exam_day1/">
+
+  
+
+
+  
+
+  
+  
+  <meta name="theme-color" content="#0095eb">
+  
+  
+  
+  
+    
+  
+  
+    
+    
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+    
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha512-6MXa8B6uaO18Hid6blRMetEIoPqHf7Ux1tnyIQdpt9qI5OACx7C+O3IVTr98vwGnlcg0LOLa02i9Y1HpVhlfiw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.1/css/academicons.min.css" integrity="sha512-NThgw3XKQ1absAahW6to7Ey42uycrVvfNfyjqcFNgCmOCQ5AR4AO0SiXrN+8ZtYeappp56lk1WtvjVmEa+VR6A==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" integrity="sha256-ygkqlh3CYSUri3LhQxzdcm0n1EQvH2Y+U5S2idbLtxs=" crossorigin="anonymous">
+  
+  
+  
+  
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat:400,700%7cRoboto:400,400italic,700%7cRoboto&#43;Mono">
+  
+  <link rel="stylesheet" href="/zh/styles.css">
+  
+
+  
+
+  
+  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="coderer&amp;debuger&amp;fucker">
+  <link rel="feed" href="/index.xml" type="application/rss+xml" title="coderer&amp;debuger&amp;fucker">
+  
+
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="icon" type="image/png" href="/img/icon.png">
+  <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
+
+  <link rel="canonical" href="/zh/post/architect_exam_day1/">
+
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="og:site_name" content="coderer&amp;debuger&amp;fucker">
+  <meta property="og:url" content="/zh/post/architect_exam_day1/">
+  <meta property="og:title" content="[系统架构设计师考试] day one | coderer&amp;debuger&amp;fucker">
+  <meta property="og:description" content=" 目前好像有5门高级,[信息系统项目管理师,系统分析师,系统架构设计师,网络规划设计师,系统规划与管理师]有想法刷一下.so,first,从兴趣最大的系统架构设计师开始.官网 本系列博文想以大纲为中心,全程发散思维，胡思乱想。
+大纲 考试日期 上半年5月份 下半年11月份,提前2个月关注报名
+考试科目设计设置  信息系统综合知识，考试时间为 150 分钟，笔试，选择题；上午9:00-11:30 系统架构设计案例分析，考试时间为 90 分钟，笔试，问答题；下午1:30-3:30 系统架构设计论文，考试时间为 120 分钟，笔试，论文题。下午3:20-5:20  考试要求(按重要性重排序)  熟悉信息系统开发过程； 熟悉主流的中间件和应用服务器平台； 熟练掌握信息安全技术、安全策略、安全管理知识； 熟练阅读和正确理解相关领域的英文文献； 掌握计算机硬软件与网络的基础知识； 掌握应用的数学基础知识; 掌握软件系统建模、系统架构设计基本技术； 理解信息系统开发标准、常用信息技术标准； 了解信息化、信息技术有关法律、法规的基础知识； 了解用户的行业特点，并根据行业特点架构合适的系统设计;   了解：只需要知道有这么个事物，大概的内容就可以了，一般考选择题. 理解：知道并且需要知道为什么，之间的关系，怎么形成，一般简答题和辨析. 掌握：必考，更高的层次，是自己内化后的东西，一般论述和辨析. 熟悉：需要记忆的，一般简答题和选择. 了解熟悉是基础，理解是关键，掌握运用是最终目的考纲里的关于熟悉、理解、掌握的一定要多看多读多分析多写
+ 从大纲看起来除了法律法规,用户行业特点设计系统,其他都是重点,包括专业英语与应用数学.
+各科目涉及的具体知识点 信息系统综合知识  计算机软件与网络基础知识,对应考试要求中[5]掌握计算机硬软件与网络的基础知识,也就是要会运用这些知识去解决问题.  操作系统的类型 你要问类型，自然要知道什么是操作系统。那么以这么多年开发的角度胡诌，操作系统就是能为软件层面的各种资源，包括内存，cpu等进行调度的平台。拿最近接触的kubernate来说，我也可以把k8s理解为分布式的操作系统，而普通大众因为接触windows比较多而把Gui程序理解为操作系统是不对的（linux的gnome等）。
+全程指导的描述： 操作系统是计算机系统中的核心系统软件， 负责管理和控制计算机系统中硬件和软件资源，合理地组织计算机工作流程和有效利用资源，在计算机与用户之间起接口的作用。
+根据工作方式分为批处理操作系统、分时操作系统、实时操作系统、网络操作系统和分布式操作系统等；
+根据架构可以分为单内核操作系统等（单内核、微内核、超微内核、以及外核）；
+根据运行的环境，可以分为桌面操作系统，嵌入式操作系统等；
+根据指令的长度分为8bit, 16bit, 32bit, 64bit的操作系统。
+ 操作系统的结构 依据wiki所说操作系统分为四大部分:驱动程序,内核,支承库(接口库;它们职责在于把系统所提供的基本服务包装成应用程序所能够使用的编程接口（API），是最靠近应用程序的部分。),外围(是指操作系统中除以上三类以外的所有其他部分，通常是用于提供特定高级服务的部件。例如，在微内核结构中，大部分系统服务，以及UNIX/Linux中各种守护进程都通常被划归此列。);四大部分的不同布局造成了不同结构。 根据全程指导的说法:无序结构,层次结构, 面向对象结构,对称多处理结构 ,微内核结构.（wiki上是分为简单结构、层结构、微内核结构、垂直结构、和虚拟机结构）。那么多说法，归根到底就是这四大部分怎么布局。    ">
+  <meta property="og:locale" content="zh-cn">
+  
+  <meta property="article:published_time" content="2018-09-11T10:21:28&#43;08:00">
+  
+  <meta property="article:modified_time" content="2018-09-11T10:21:28&#43;08:00">
+  
+
+  
+
+  <title>[系统架构设计师考试] day one | coderer&amp;debuger&amp;fucker</title>
+
+</head>
+<body id="top" data-spy="scroll" data-target="#toc" data-offset="71" >
+
+<nav class="navbar navbar-default navbar-fixed-top" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="navbar-header">
+      
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+              data-target=".navbar-collapse" aria-expanded="false">
+        <span class="sr-only">切换导航</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+      <a class="navbar-brand" href="/zh">coderer&amp;debuger&amp;fucker</a>
+    </div>
+
+    
+    <div class="collapse navbar-collapse">
+
+      
+      
+      <ul class="nav navbar-nav navbar-right">
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/zh/#posts">
+            
+            <span>文</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/zh/#contact">
+            
+            <span>聊</span>
+            
+          </a>
+        </li>
+
+        
+        
+      
+
+      
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+
+<article class="article" itemscope itemtype="http://schema.org/Article">
+
+  
+
+
+  <div class="article-container">
+    <h1 itemprop="name">[系统架构设计师考试] day one</h1>
+
+    
+
+<div class="article-metadata">
+
+  <span class="article-date">
+    
+    <time datetime="2018-09-11 10:21:28 &#43;0800 &#43;0800" itemprop="datePublished dateModified">
+      2018-09-11
+    </time>
+  </span>
+  <span itemscope itemprop="author publisher" itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="bk201">
+  </span>
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    1 分钟阅读时间
+  </span>
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <a href="/zh/post/architect_exam_day1/#disqus_thread"></a>
+  
+
+  
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fa fa-folder"></i>
+    
+    <a href="/zh/categories/%e8%80%83%e8%af%95">考试</a
+    >
+    
+  </span>
+  
+  
+
+  
+  
+
+  
+
+</div>
+
+
+    <div class="article-style" itemprop="articleBody">
+      
+
+<p>目前好像有5门高级,[信息系统项目管理师,系统分析师,系统架构设计师,网络规划设计师,系统规划与管理师]有想法刷一下.so,first,从兴趣最大的系统架构设计师开始.<a href="http://www.ruankao.org.cn/introduction/zgsz" target="_blank">官网</a>
+本系列博文想以大纲为中心,全程发散思维，胡思乱想。</p>
+
+<h2 id="大纲">大纲</h2>
+
+<h3 id="考试日期">考试日期</h3>
+
+<p>上半年5月份 下半年11月份,提前2个月关注报名</p>
+
+<h3 id="考试科目设计设置">考试科目设计设置</h3>
+
+<ol>
+<li>信息系统综合知识，考试时间为 150 分钟，笔试，选择题；上午9:00-11:30</li>
+<li>系统架构设计案例分析，考试时间为 90 分钟，笔试，问答题；下午1:30-3:30</li>
+<li>系统架构设计论文，考试时间为 120 分钟，笔试，论文题。下午3:20-5:20</li>
+</ol>
+
+<h3 id="考试要求-按重要性重排序">考试要求(按重要性重排序)</h3>
+
+<ol>
+<li>熟悉信息系统开发过程；</li>
+<li>熟悉主流的中间件和应用服务器平台；</li>
+<li>熟练掌握信息安全技术、安全策略、安全管理知识；</li>
+<li>熟练阅读和正确理解相关领域的英文文献；</li>
+<li>掌握计算机硬软件与网络的基础知识；</li>
+<li>掌握应用的数学基础知识;</li>
+<li>掌握软件系统建模、系统架构设计基本技术；</li>
+<li>理解信息系统开发标准、常用信息技术标准；</li>
+<li>了解信息化、信息技术有关法律、法规的基础知识；</li>
+<li>了解用户的行业特点，并根据行业特点架构合适的系统设计;</li>
+</ol>
+
+<blockquote>
+<p>了解：只需要知道有这么个事物，大概的内容就可以了，一般考选择题. 理解：知道并且需要知道为什么，之间的关系，怎么形成，一般简答题和辨析. 掌握：必考，更高的层次，是自己内化后的东西，一般论述和辨析. 熟悉：需要记忆的，一般简答题和选择. 了解熟悉是基础，理解是关键，掌握运用是最终目的考纲里的关于熟悉、理解、掌握的一定要多看多读多分析多写</p>
+</blockquote>
+
+<p>从大纲看起来除了法律法规,用户行业特点设计系统,其他都是重点,包括专业英语与应用数学.</p>
+
+<h3 id="各科目涉及的具体知识点">各科目涉及的具体知识点</h3>
+
+<h4 id="信息系统综合知识">信息系统综合知识</h4>
+
+<ol>
+<li>计算机软件与网络基础知识,对应考试要求中[5]掌握计算机硬软件与网络的基础知识,也就是要会运用这些知识去解决问题.
+
+<ol>
+<li>操作系统的类型
+你要问类型，自然要知道什么是操作系统。那么以这么多年开发的角度胡诌，操作系统就是能为软件层面的各种资源，包括内存，cpu等进行调度的平台。拿最近接触的kubernate来说，我也可以把k8s理解为分布式的操作系统，而普通大众因为接触windows比较多而把Gui程序理解为操作系统是不对的（linux的gnome等）。<br />
+全程指导的描述：
+<code>操作系统是计算机系统中的核心系统软件， 负责管理和控制计算机系统中硬件和软件资源，合理地组织计算机工作流程和有效利用资源，在计算机与用户之间起接口的作用。</code><br />
+根据工作方式分为批处理操作系统、分时操作系统、实时操作系统、网络操作系统和分布式操作系统等；<br />
+根据架构可以分为单内核操作系统等（单内核、微内核、超微内核、以及外核）；<br />
+根据运行的环境，可以分为桌面操作系统，嵌入式操作系统等；<br />
+根据指令的长度分为8bit, 16bit, 32bit, 64bit的操作系统。<br /></li>
+<li>操作系统的结构
+依据wiki所说操作系统分为四大部分:驱动程序,内核,支承库(接口库;它们职责在于把系统所提供的基本服务包装成应用程序所能够使用的编程接口（API），是最靠近应用程序的部分。),外围(是指操作系统中除以上三类以外的所有其他部分，通常是用于提供特定高级服务的部件。例如，在微内核结构中，大部分系统服务，以及UNIX/Linux中各种守护进程都通常被划归此列。);四大部分的不同布局造成了不同结构。 根据全程指导的说法:无序结构,层次结构, 面向对象结构,对称多处理结构 ,微内核结构.（wiki上是分为简单结构、层结构、微内核结构、垂直结构、和虚拟机结构）。那么多说法，归根到底就是这四大部分怎么布局。
+<br /></li>
+</ol></li>
+</ol>
+
+    </div>
+
+    
+
+
+<div class="article-tags">
+  
+  <a class="btn btn-primary btn-outline" href="/zh/tags/%e7%b3%bb%e7%bb%9f%e6%9e%b6%e6%9e%84%e8%ae%be%e8%ae%a1%e5%b8%88">系统架构设计师</a>
+  
+</div>
+
+
+
+
+    
+    
+    <div class="article-widget">
+      <div class="hr-light"></div>
+      <h3>相关</h3>
+      <ul>
+        
+        <li><a href="/zh/post/architect_exam_day2/">[系统架构设计师考试] day two</a></li>
+        
+      </ul>
+    </div>
+    
+
+    
+    <div class="article-widget">
+      <div class="post-nav">
+  
+  <div class="post-nav-item">
+    <div class="meta-nav"></div>
+    <a href="/zh/post/dreamofrocket/" rel="next">记一个有意思的天空之城梦</a>
+  </div>
+  
+  
+  <div class="post-nav-item">
+    <div class="meta-nav"></div>
+    <a href="/zh/post/architect_exam_day2/" rel="prev">[系统架构设计师考试] day two</a>
+  </div>
+  
+</div>
+
+    </div>
+    
+
+    
+<section id="comments">
+  <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "bk201sama" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+
+  </div>
+</article>
+
+<footer class="site-footer">
+  <div class="container">
+    <p class="powered-by">
+
+      &copy; 2018 &middot; 
+
+      Powered by the
+      <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+      <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+      <span class="pull-right" aria-hidden="true">
+        <a href="#" id="back_to_top">
+          <span class="button_icon">
+            <i class="fa fa-chevron-up fa-2x"></i>
+          </span>
+        </a>
+      </span>
+
+    </p>
+  </div>
+</footer>
+
+
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close btn-large" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">引用</h4>
+      </div>
+      <div>
+        <pre><code class="modal-body tex"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-primary btn-outline js-copy-cite" href="#" target="_blank">
+          <i class="fa fa-copy"></i> 复制
+        </a>
+        <a class="btn btn-primary btn-outline js-download-cite" href="#" target="_blank">
+          <i class="fa fa-download"></i> 下载
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+    
+    <script id="dsq-count-scr" src="//bk201sama.disqus.com/count.js" async></script>
+    
+
+    
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha512-3P8rXCuGJdNZOnUx/03c1jOTnMn3rP63nBip5gOP2qmUh5YAdVAvFZ1E+QLZZbC1rtMrQb+mah3AfYW11RUrWA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.3/imagesloaded.pkgd.min.js" integrity="sha512-umsR78NN0D23AzgoZ11K7raBD+R6hqKojyBZs1w8WvYlsI+QuKRGBx3LFCwhatzBunCjDuJpDHwxD13sLMbpRA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha512-iztkobsvnjKfAtTNdHkGVjAYTrrtlC7mGp/54c40wowO7LhURYl3gVzzcEqGl/qKXQltJ2HwMrdLcNUdo+N/RQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.4/isotope.pkgd.min.js" integrity="sha512-VDBOIlDbuC4VWxGJNmuFRQ0Li0SKkDpmGyuhAG5LTDLd/dJ/S0WMVxriR2Y+CyPL5gzjpN4f/6iqWVBJlht0tQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" integrity="sha256-X5PoE3KU5l+JcX+w09p/wHl9AzK333C4hJ2I9S5mD4M=" crossorigin="anonymous"></script>
+    
+    
+    <script src="/js/hugo-academic.js"></script>
+    
+
+    
+    
+      
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+      
+
+      
+
+      
+
+      <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    
+    
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+    </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML" integrity="sha512-tOav5w1OjvsSJzePRtt2uQPFwBoHt1VZcUq8l8nm5284LEKE9FSJBQryzMBzHxY5P0zRdNqEcpLIRVYFNgu1jw==" crossorigin="anonymous"></script>
+    
+    
+
+  </body>
+</html>
+
